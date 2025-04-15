@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" type="text/css" href="https://js.cit.api.here.com/v3/3.0/mapsjs-ui.css?dp-version=1526040296" />
+  <script type="text/javascript" src="https://js.cit.api.here.com/v3/3.0/mapsjs-core.js"></script>
+  <script type="text/javascript" src="https://js.cit.api.here.com/v3/3.0/mapsjs-service.js"></script>
+  <script type="text/javascript" src="https://js.cit.api.here.com/v3/3.0/mapsjs-ui.js"></script>
+  <script type="text/javascript" src="https://js.cit.api.here.com/v3/3.0/mapsjs-mapevents.js"></script>
+  <link rel="stylesheet" type="text/css" href="stack.css"/>
+</head>
+
+<body>
+  <div id="mapContainer"></div>
+  <script>
+
+    function addMarkersToMap(map) 
+    {
+      let options = 
+      {
+        method: "GET"
+      }
+      let url=localStorage.getItem("url");
+      fetch(url, options)
+        .then(function(response) 
+        {
+            return response.json();
+        })
+        .then(function(data) 
+        {
+            let 
+            {
+              time,
+              states
+            } = data;
+
+            console.log(states);
+
+            for(let result of states)
+            {
+              var defaultIcon = new H.map.Icon("https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/444/aiga_departingflights-512.png", {size: {w: 21, h: 21}});
+              var parisMarker = new H.map.Marker(
+              {
+              lat: result[6],
+              lng: result[5]
+              }, 
+              {icon: defaultIcon});
+            map.addObject(parisMarker);
+            }
+        });
+    }
+
+    const platform = new H.service.Platform
+    ({
+      app_id: 'DemoAppId01082013GAL',
+      app_code: 'AJKnXv84fjrb0KIHawS0Tg',
+      useCIT: true,
+      useHTTPS: true
+    });
+
+    const maptypes = platform.createDefaultLayers();
+    let longi=localStorage.getItem("long");
+    let lati=localStorage.getItem("lat");
+    this.map = new H.Map
+    (
+      document.querySelector('#mapContainer'),
+      maptypes.normal.map, 
+      {
+        zoom: 7,
+        center: 
+        {
+          lat: lati,
+          lng: longi
+        },
+      },
+    );
+
+    var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(this.map));
+
+    var ui = H.ui.UI.createDefault(this.map, maptypes, 'pt-BR');
+
+    addMarkersToMap(this.map);
+  </script>
+</body>
+</html>
+
